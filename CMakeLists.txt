@@ -16,6 +16,7 @@ set(IMGUI_SOURCES
 	./vendor/dearimgui/imgui_draw.cpp
 	./vendor/dearimgui/backends/imgui_impl_glfw.cpp
 	./vendor/dearimgui/backends/imgui_impl_opengl3.cpp
+	./vendor/dearimgui/misc/cpp/imgui_stdlib.cpp
 )
 
 set(SOURCES

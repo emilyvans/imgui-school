@@ -112,7 +112,10 @@ app::app() {
 	io.ConfigFlags |=
 		ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
 	io.ConfigFlags |=
-		ImGuiConfigFlags_NavEnableGamepad; // Enable Gamepad Controls
+		ImGuiConfigFlags_NavEnableGamepad;            // Enable Gamepad Controls
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable; // Enable Docking
+	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; // Enable Multi-Viewport
+	                                                    // / Platform Windows
 	// Setup Dear ImGui style
 	ImGui::StyleColorsDark();
 	// ImGui::StyleColorsLight();
@@ -162,6 +165,7 @@ app::app() {
 }
 
 void app::run() {
+	ImGuiIO &io = ImGui::GetIO();
 	// Main loop
 	while (!glfwWindowShouldClose(window)) {
 		// Poll and handle events (inputs, window resize, etc.)
@@ -185,6 +189,8 @@ void app::run() {
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 
+		ImGui::DockSpaceOverViewport();
+
 		this->update();
 
 		// Rendering
@@ -197,6 +203,13 @@ void app::run() {
 		             clear_color.z * clear_color.w, clear_color.w);
 		glClear(GL_COLOR_BUFFER_BIT);
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+			GLFWwindow *backup_current_context = glfwGetCurrentContext();
+			ImGui::UpdatePlatformWindows();
+			ImGui::RenderPlatformWindowsDefault();
+			glfwMakeContextCurrent(backup_current_context);
+		}
 
 		glfwSwapBuffers(window);
 	}
