@@ -26,10 +26,11 @@ set(SOURCES
 
 
 add_subdirectory(./vendor/glfw-3.5.1)
+add_subdirectory(./vendor/mariadb-connector-cpp-1.1.8)
 
 add_executable(dearimgui ${SOURCES} ${IMGUI_SOURCES})
 
-target_link_libraries(dearimgui glfw OpenGL)
+target_link_libraries(dearimgui glfw OpenGL mariadbcpp-static)
 
 target_include_directories(dearimgui PRIVATE ./vendor/dearimgui/)
 target_include_directories(dearimgui PRIVATE ./vendor/dearimgui/backends/)
