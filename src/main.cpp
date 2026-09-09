@@ -10,13 +10,34 @@
 // folder).
 // - Introduction, links and more at the top of imgui.cpp
 
-#include "app.h"
+#include "App.hpp"
 
-// Main code
-int main(int, char **) {
+#include "Window.hpp"
 
-	app myapp;
-	myapp.run();
+#if APPLE
+#include "renderer/MetalRenderer.h"
+#else
+#include "renderer/GLRenderer.hpp"
+#endif
 
-	return 0;
+
+int main(int argc, char** argv)
+{
+    if (!glfwInit()) return 1;
+
+    Window<APPLE ? Metal : OpenGL> window{800, 600, "test"};
+#if APPLE
+    MetalRenderer renderer{window};
+#else
+    GLRenderer renderer{window};
+#endif
+    App app;
+
+    while (!window.shouldClose()) {
+        renderer.render([&app]() { app.draw(); });
+    }
+
+    glfwTerminate();
+
+    return 0;
 }
