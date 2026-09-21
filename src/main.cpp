@@ -16,21 +16,22 @@
 
 #if APPLE
 #include "renderer/MetalRenderer.h"
+
+using RendererImpl = MetalRenderer;
+using WindowImpl = Window<Metal>;
 #else
 #include "renderer/GLRenderer.hpp"
-#endif
 
+using RendererImpl = GLRenderer;
+using WindowImpl = Window<OpenGL>;
+#endif
 
 int main(int argc, char** argv)
 {
     if (!glfwInit()) return 1;
 
-    Window<APPLE ? Metal : OpenGL> window{800, 600, "test"};
-#if APPLE
-    MetalRenderer renderer{window};
-#else
-    GLRenderer renderer{window};
-#endif
+    WindowImpl window{800, 600, "test"};
+    RendererImpl renderer{window};
     App app;
 
     while (!window.shouldClose()) {

@@ -64,6 +64,9 @@ add_executable(dearimgui ${SOURCES} ${IMGUI_SOURCES} ${SRC_PLATFORM})
 
 target_link_libraries(dearimgui ${LIB} ${LIB_PLATFORM})
 
-target_include_directories(dearimgui PRIVATE ./vendor/dearimgui/)
-target_include_directories(dearimgui PRIVATE ./vendor/dearimgui/backends/)
-target_include_directories(dearimgui PRIVATE ./src/)
+target_include_directories(dearimgui PRIVATE
+    ./vendor/dearimgui/
+    ./vendor/dearimgui/backends/
+    ./vendor/metal-cpp/
+    ./src/
+)

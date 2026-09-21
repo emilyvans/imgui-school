@@ -48,7 +48,7 @@ public:
     Window(int width, int height, const std::string& title)
     {
         // window hints
-        if constexpr(type == WindowType::Metal) {
+        if constexpr(type == WindowType::NoApi) {
             glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
         } else if constexpr(type == WindowType::OpenGL) {
             _windowHintsOpenGL();
@@ -72,6 +72,11 @@ public:
     bool shouldClose() noexcept
     {
         return glfwWindowShouldClose(_window);
+    }
+
+    constexpr WindowType windowType() noexcept
+    {
+        return type;
     }
 
     GLFWwindow* glfwWindow() noexcept
