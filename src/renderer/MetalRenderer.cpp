@@ -1,28 +1,21 @@
-#include "MetalRenderer.h"
+#include "MetalRenderer.hpp"
 
 #define GLFW_EXPOSE_NATIVE_COCOA
 #include <GLFW/glfw3native.h>
 
-#import <Metal/Metal.h>
-#import <QuartzCore/QuartzCore.h>
+#include <Foundation/Foundation.hpp>
+#include <Metal/Metal.hpp>
+#include <QuartzCore/QuartzCore.hpp>
+#include <AppKit/AppKit.hpp>
 
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
+
+#define IMGUI_IMPL_METAL_CPP
 #include "imgui_impl_metal.h"
 
-struct MetalRenderer::ObjCStorage {
-    MTLRenderPassDescriptor* renderPassDescriptor;
-    CAMetalLayer* layer;
-    id <MTLDevice> device;
-    id <MTLCommandQueue> commandQueue;
-
-    id <MTLRenderCommandEncoder> curRenderEncoder;
-    id <MTLCommandBuffer> curCommandBuffer;
-    id <CAMetalDrawable> curDrawable;
-};
-
 MetalRenderer::MetalRenderer(Window<Metal>& win)
-    : _objc{std::make_unique<ObjCStorage>()}, _win{win}
+    : _win{win}
 {
     float main_scale = ImGui_ImplGlfw_GetContentScaleForMonitor(glfwGetPrimaryMonitor()); // Valid on GLFW 3.3+ only
 
@@ -42,12 +35,12 @@ MetalRenderer::MetalRenderer(Window<Metal>& win)
     style.ScaleAllSizes(main_scale);        // Bake a fixed style scale. (until we have a solution for dynamic style scaling, changing this requires resetting Style + calling this again)
     style.FontScaleDpi = main_scale;        // Set initial font scale. (in docking branch: using io.ConfigDpiScaleFonts=true automatically overrides this for every window depending on the current monitor)
 
-    _objc->device = MTLCreateSystemDefaultDevice();
-    _objc->commandQueue = [_objc->device newCommandQueue];
+    _device = NS::TransferPtr(MTL::CreateSystemDefaultDevice());
+    _commandQueue = NS::TransferPtr(_device->newCommandQueue());
 
     // Setup Platform/Renderer backends
     ImGui_ImplGlfw_InitForOpenGL(_win.glfwWindow(), true);
-    ImGui_ImplMetal_Init(_objc->device);
+    ImGui_ImplMetal_Init(_device.get());
 
     // Load Fonts
     // - If fonts are not explicitly loaded, Dear ImGui will select an embedded font: either AddFontDefaultVector() or AddFontDefaultBitmap().
@@ -67,14 +60,19 @@ MetalRenderer::MetalRenderer(Window<Metal>& win)
     //ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf");
     //IM_ASSERT(font != nullptr);
 
-    NSWindow *nswin = glfwGetCocoaWindow(_win.glfwWindow());
-    _objc->layer = [CAMetalLayer layer];
-    _objc->layer.device = _objc->device;
-    _objc->layer.pixelFormat = MTLPixelFormatBGRA8Unorm;
-    nswin.contentView.layer = _objc->layer;
-    nswin.contentView.wantsLayer = YES;
+    auto nswin = reinterpret_cast<NS::Window*>(glfwGetCocoaWindow(_win.glfwWindow()));
 
-    _objc->renderPassDescriptor = [MTLRenderPassDescriptor new];
+    _layer = NS::TransferPtr(CA::MetalLayer::layer());
+    _layer->setDevice(_device.get());
+    _layer->setPixelFormat(MTL::PixelFormatBGRA8Unorm);
+
+
+    auto view = nswin->contentView();
+
+    view->setLayer(_layer.get());
+    view->setWantsLayer(true);
+
+    _renderPassDescriptor = NS::TransferPtr(MTL::RenderPassDescriptor::renderPassDescriptor());
 }
 
 MetalRenderer::~MetalRenderer()
@@ -96,21 +94,27 @@ bool MetalRenderer::renderBegin()
     // Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
     glfwPollEvents();
 
-    int width, height;
+    int width;
+    int height;
     glfwGetFramebufferSize(_win.glfwWindow(), &width, &height);
-    _objc->layer.drawableSize = CGSizeMake(width, height);
-    _objc->curDrawable = [_objc->layer nextDrawable];
 
-    _objc->curCommandBuffer = [_objc->commandQueue commandBuffer];
+    _layer->setDrawableSize(CGSizeMake(width, height));
+
+    _curDrawable = _layer->nextDrawable();
+    _curCommandBuffer = _commandQueue->commandBuffer();
+
+    auto colorAtt0 = _renderPassDescriptor->colorAttachments()->object(0);
     //_objc->renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(clear_color[0] * clear_color[3], clear_color[1] * clear_color[3], clear_color[2] * clear_color[3], clear_color[3]);
-    _objc->renderPassDescriptor.colorAttachments[0].texture = _objc->curDrawable.texture;
-    _objc->renderPassDescriptor.colorAttachments[0].loadAction = MTLLoadActionClear;
-    _objc->renderPassDescriptor.colorAttachments[0].storeAction = MTLStoreActionStore;
-    _objc->curRenderEncoder = [_objc->curCommandBuffer renderCommandEncoderWithDescriptor:_objc->renderPassDescriptor];
-    [_objc->curRenderEncoder pushDebugGroup:@"ImGui demo"];
+    colorAtt0->setTexture(_curDrawable->texture());
+    colorAtt0->setLoadAction(MTL::LoadActionClear);
+    colorAtt0->setStoreAction(MTL::StoreActionStore);
+
+    _curRenderEncoder = _curCommandBuffer->renderCommandEncoder(_renderPassDescriptor.get());
+    _curRenderEncoder->pushDebugGroup(NS::String::string("ImGui app", NS::StringEncoding::UTF8StringEncoding));
+
 
     // Start the Dear ImGui frame
-    ImGui_ImplMetal_NewFrame(_objc->renderPassDescriptor);
+    ImGui_ImplMetal_NewFrame(_renderPassDescriptor.get());
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 
@@ -124,18 +128,18 @@ bool MetalRenderer::renderEnd()
 
     // Rendering
     ImGui::Render();
-    ImGui_ImplMetal_RenderDrawData(ImGui::GetDrawData(), _objc->curCommandBuffer, _objc->curRenderEncoder);
+    ImGui_ImplMetal_RenderDrawData(ImGui::GetDrawData(), _curCommandBuffer, _curRenderEncoder);
 
-    [_objc->curRenderEncoder popDebugGroup];
-    [_objc->curRenderEncoder endEncoding];
+    _curRenderEncoder->popDebugGroup();
+    _curRenderEncoder->endEncoding();
 
-    [_objc->curCommandBuffer presentDrawable:_objc->curDrawable];
-    [_objc->curCommandBuffer commit];
+    _curCommandBuffer->presentDrawable(_curDrawable);
+    _curCommandBuffer->commit();
 
     // release temp objects
-    [_objc->curDrawable release];
-    [_objc->curCommandBuffer release];
-    [_objc->curRenderEncoder release];
+    _curDrawable->release();
+    _curCommandBuffer->release();
+    _curRenderEncoder->release();
 
     return true;
 }

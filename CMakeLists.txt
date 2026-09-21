@@ -38,21 +38,24 @@ add_compile_definitions(APPLE=${APPLE})
 
 if (APPLE)
     set(LIB_PLATFORM
-        "-framework Metal"
-        "-framework MetalKit"
-        "-framework Cocoa"
-        "-framework IOKit"
-        "-framework CoreVideo"
+        "-framework Foundation"
         "-framework QuartzCore"
+        "-framework Metal"
+        #"-framework MetalKit"
+        #"-framework Cocoa"
+        #"-framework IOKit"
+        #"-framework CoreVideo"
     )
     set(SRC_PLATFORM
-        ./src/renderer/MetalRenderer.mm
+        ./src/renderer/MetalRenderer.cpp
+        #./src/MetalTexture.mm
 	./vendor/dearimgui/backends/imgui_impl_metal.mm
     )
 else()
     set(LIB_PLATFORM OpenGL::GL)
     set(SRC_PLATFORM
         ./src/renderer/GLRenderer.cpp
+        ./src/GLTexture.cpp
 	./vendor/dearimgui/backends/imgui_impl_opengl3.cpp
     )
 endif()
@@ -60,13 +63,14 @@ endif()
 add_subdirectory(./vendor/glfw-3.5.1)
 add_subdirectory(./vendor/mariadb-connector-cpp-1.1.8)
 
-add_executable(dearimgui ${SOURCES} ${IMGUI_SOURCES} ${SRC_PLATFORM})
+add_executable(dearimgui ${SOURCES} ${SRC_PLATFORM} ${IMGUI_SOURCES})
 
 target_link_libraries(dearimgui ${LIB} ${LIB_PLATFORM})
 
 target_include_directories(dearimgui PRIVATE
+    ./vendor/metal-cpp-extensions/
+    ./vendor/metal-cpp/
     ./vendor/dearimgui/
     ./vendor/dearimgui/backends/
-    ./vendor/metal-cpp/
     ./src/
 )
