@@ -8,9 +8,9 @@
 #include <QuartzCore/QuartzCore.hpp>
 
 #include "Window.hpp"
-#include "renderer/RendererBase.hpp"
+#include "renderer/Renderer.hpp"
 
-class MetalRenderer : public RendererBase {
+class MetalRenderer : public Renderer {
 private:
     NS::SharedPtr<MTL::Device> _device;
     NS::SharedPtr<MTL::CommandQueue> _commandQueue;
@@ -27,6 +27,8 @@ private:
 public:
     MetalRenderer(Window<Metal>& win);
     ~MetalRenderer();
+
+    NS::SharedPtr<MTL::Device> device() const;
 
     bool renderBegin() override;
     bool renderEnd() override;

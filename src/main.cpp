@@ -24,11 +24,13 @@
 #include <AppKit/AppKit.hpp>
 
 #include "renderer/MetalRenderer.hpp"
+#include "MetalTextureLoader.hpp"
 
 using RendererImpl = MetalRenderer;
 using WindowImpl = Window<Metal>;
 #else
 #include "renderer/GLRenderer.hpp"
+#include "GLTextureLoader.hpp"
 
 using RendererImpl = GLRenderer;
 using WindowImpl = Window<OpenGL>;
@@ -40,7 +42,14 @@ int main(int argc, char** argv)
 
     WindowImpl window{800, 600, "test"};
     RendererImpl renderer{window};
-    App app;
+
+#ifdef APPLE
+    MetalTextureLoader texLoader{renderer.device()};
+#else
+    GLTextureLoader texLoader{};
+#endif
+
+    App app{texLoader};
 
     while (!window.shouldClose()) {
         renderer.render([&app]() { app.draw(); });

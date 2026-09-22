@@ -2,9 +2,9 @@
 
 #include <functional>
 
-class RendererBase {
+class Renderer {
 public:
-    virtual ~RendererBase();
+    //virtual void* device() const = 0;
 
     virtual bool render(std::function<void()> update);
     virtual bool renderBegin() = 0;

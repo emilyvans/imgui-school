@@ -144,3 +144,7 @@ bool MetalRenderer::renderEnd()
     return true;
 }
 
+NS::SharedPtr<MTL::Device> MetalRenderer::device() const
+{
+    return _device;
+}

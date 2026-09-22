@@ -4,9 +4,9 @@
 #include <GLFW/glfw3.h>
 
 #include "Window.hpp"
-#include "renderer/RendererBase.hpp"
+#include "renderer/Renderer.hpp"
 
-class GLRenderer : public RendererBase {
+class GLRenderer : public Renderer {
 private:
     Window<OpenGL>& _win;
     bool _renderStarted = false;

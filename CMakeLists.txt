@@ -27,7 +27,8 @@ set(SOURCES
 	./src/main.cpp
 	./src/App.cpp
         ./src/Window.cpp
-        ./src/renderer/RendererBase.cpp
+        ./src/Texture.cpp
+        ./src/renderer/Renderer.cpp
 )
 
 set(LIB
@@ -48,7 +49,8 @@ if (APPLE)
     )
     set(SRC_PLATFORM
         ./src/renderer/MetalRenderer.cpp
-        #./src/MetalTexture.mm
+        ./src/MetalTexture.cpp
+        ./src/MetalTextureLoader.cpp
 	./vendor/dearimgui/backends/imgui_impl_metal.mm
     )
 else()
@@ -56,6 +58,7 @@ else()
     set(SRC_PLATFORM
         ./src/renderer/GLRenderer.cpp
         ./src/GLTexture.cpp
+        ./src/GLTextureLoader.cpp
 	./vendor/dearimgui/backends/imgui_impl_opengl3.cpp
     )
 endif()
