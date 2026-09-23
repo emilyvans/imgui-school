@@ -14,13 +14,22 @@ option(USE_GL "Use OpenGL regardless of platform" OFF)
 message(${USE_GL})
 
 project(dearimgui)
+include(FetchContent)
+
+FetchContent_Declare(glfw
+	SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/vendor/glfw-3.5.1/"
+)
+
+set(CONC_WITH_UNIT_TESTS Off)
+FetchContent_Declare(mariadbcpp
+	SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/vendor/mariadb-connector-cpp-1.1.8/"
+)
+
+FetchContent_MakeAvailable(glfw mariadbcpp)
 
 find_package(OpenGL REQUIRED)
 
 add_definitions(-DGL_SILENCE_DEPRECATION)
-
-add_subdirectory(./vendor/glfw-3.5.1)
-add_subdirectory(./vendor/mariadb-connector-cpp-1.1.8)
 
 add_executable(imguiapp)
 
