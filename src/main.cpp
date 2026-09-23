@@ -14,7 +14,7 @@
 
 #include "Window.hpp"
 
-#if APPLE
+#if defined(USE_METAL)
 #define NS_PRIVATE_IMPLEMENTATION
 #define CA_PRIVATE_IMPLEMENTATION
 #define MTL_PRIVATE_IMPLEMENTATION
@@ -28,12 +28,14 @@
 
 using RendererImpl = MetalRenderer;
 using WindowImpl = Window<Metal>;
+using TextureLoaderImpl = MetalTextureLoader;
 #else
 #include "renderer/GLRenderer.hpp"
 #include "GLTextureLoader.hpp"
 
 using RendererImpl = GLRenderer;
 using WindowImpl = Window<OpenGL>;
+using TextureLoaderImpl = GLTextureLoader;
 #endif
 
 int main(int argc, char** argv)
@@ -42,11 +44,10 @@ int main(int argc, char** argv)
 
     WindowImpl window{800, 600, "test"};
     RendererImpl renderer{window};
+    TextureLoaderImpl texLoader{};
 
-#ifdef APPLE
-    MetalTextureLoader texLoader{renderer.device()};
-#else
-    GLTextureLoader texLoader{};
+#ifdef USE_METAL
+    texLoader.setDevice(renderer.device());
 #endif
 
     App app{texLoader};

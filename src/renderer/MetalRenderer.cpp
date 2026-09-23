@@ -1,6 +1,8 @@
 #include "MetalRenderer.hpp"
 
+#define GLFW_INCLUDE_NONE
 #define GLFW_EXPOSE_NATIVE_COCOA
+#include <GLFW/glfw3.h>
 #include <GLFW/glfw3native.h>
 
 #include <Foundation/Foundation.hpp>
@@ -8,11 +10,10 @@
 #include <QuartzCore/QuartzCore.hpp>
 #include <AppKit/AppKit.hpp>
 
-#include "imgui.h"
-#include "imgui_impl_glfw.h"
-
 #define IMGUI_IMPL_METAL_CPP
-#include "imgui_impl_metal.h"
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_metal.h>
 
 MetalRenderer::MetalRenderer(Window<Metal>& win)
     : _win{win}

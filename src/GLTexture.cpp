@@ -1,5 +1,7 @@
 #include "GLTexture.hpp"
 
+#include <OpenGL/gl.h>
+
 GLTexture::GLTexture(GLuint texId, int width, int height)
     : _tex{texId}, _width{width}, _height{height}
 {

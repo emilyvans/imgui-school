@@ -1,10 +1,30 @@
 #include "App.hpp"
 
+#include <fstream>
 #include <cstdlib>
+
+#include <imgui.h>
+
+#include "Utils.hpp"
 
 App::App(TextureLoader& texLoader)
     : _texLoader{texLoader}
-{ }
+{
+    std::ifstream imgFile{"./test.png", std::ios::binary};
+
+    imgFile.seekg(0, std::ios::end);
+    size_t siz = imgFile.tellg();
+    imgFile.seekg(0, std::ios::beg);
+
+    auto data = new char[siz];
+    imgFile.read(data, siz);
+
+    auto sampleTex = _texLoader.loadFromMemory(data, siz);
+    if (sampleTex != nullptr)
+        _textures["sample"] = std::move(sampleTex);
+
+    delete[] data;
+}
 
 void App::draw()
 {
@@ -45,6 +65,13 @@ void App::draw()
         ImGuiIO &io = ImGui::GetIO();
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)",
                     1000.0f / io.Framerate, io.Framerate);
+
+        if (_textures.contains("sample")) {
+            auto& sampleTex = *_textures["sample"];
+
+            ImGui::Image(sampleTex.inner(), Utils::getDimensions(sampleTex));
+        }
+
         ImGui::End();
     }
 

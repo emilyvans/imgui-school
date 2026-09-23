@@ -2,6 +2,8 @@
 
 #include <memory>
 
+#include <cstdint>
+
 #include <OpenGL/gl.h>
 
 #include "GLTexture.hpp"
@@ -10,7 +12,11 @@ std::unique_ptr<Texture> GLTextureLoader::loadFromMemory(const void* data, size_
 {
     int width;
     int height;
-    void* imageData = nullptr;
+    std::uint8_t* imageData;
+
+    if (!_loadDataFromMemory(data, size, imageData, &width, &height, nullptr)) {
+        return nullptr;
+    }
 
     GLuint tex;
     glGenTextures(1, &tex);

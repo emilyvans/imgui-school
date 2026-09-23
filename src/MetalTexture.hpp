@@ -10,7 +10,7 @@ private:
     NS::SharedPtr<MTL::Texture> _tex;
 
 public:
-    MetalTexture(MTL::Texture* tex);
+    MetalTexture(NS::SharedPtr<MTL::Texture> tex);
 
     void* inner() const noexcept override;
     int width() const noexcept override;

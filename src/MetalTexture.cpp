@@ -1,10 +1,12 @@
 #include "MetalTexture.hpp"
 
-MetalTexture::MetalTexture(MTL::Texture* tex)
-    : _tex{NS::TransferPtr(tex)}
+#include <Foundation/Foundation.hpp>
+#include <Metal/Metal.hpp>
+
+MetalTexture::MetalTexture(NS::SharedPtr<MTL::Texture> tex)
+    : _tex{tex}
 {
 }
-
 
 void* MetalTexture::inner() const noexcept
 {
