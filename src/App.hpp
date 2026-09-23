@@ -1,17 +1,16 @@
 #pragma once
 
+#include <string>
+
 #if defined(IMGUI_IMPL_OPENGL_ES2)
 #include <GLES2/gl2.h>
 #endif
 #include <GLFW/glfw3.h> // Will drag system OpenGL headers
 
-#include <string>
-#include <unordered_map>
-
 #include <imgui.h>
 
-#include "Texture.hpp"
 #include "TextureLoader.hpp"
+#include "TextureStore.hpp"
 
 class App {
 private:
@@ -20,7 +19,9 @@ private:
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
     TextureLoader& _texLoader;
-    std::unordered_map<std::string, std::unique_ptr<Texture>> _textures;
+    TextureStore _texStore;
+
+    void _loadTexture(const std::string& name, const std::string& path);
 
 public:
     App(TextureLoader& texLoader);

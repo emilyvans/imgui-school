@@ -1,6 +1,7 @@
 #include "App.hpp"
 
 #include <fstream>
+#include <string>
 #include <cstdlib>
 
 #include <imgui.h>
@@ -10,7 +11,14 @@
 App::App(TextureLoader& texLoader)
     : _texLoader{texLoader}
 {
-    std::ifstream imgFile{"./test.png", std::ios::binary};
+    _loadTexture("test", "./test.png");
+    _loadTexture("usb", "./usb.jpg");
+    _loadTexture("javascript", "./js.jpg");
+}
+
+void App::_loadTexture(const std::string& name, const std::string& path)
+{
+    std::ifstream imgFile{path, std::ios::binary};
 
     imgFile.seekg(0, std::ios::end);
     size_t siz = imgFile.tellg();
@@ -19,9 +27,9 @@ App::App(TextureLoader& texLoader)
     auto data = new char[siz];
     imgFile.read(data, siz);
 
-    auto sampleTex = _texLoader.loadFromMemory(data, siz);
-    if (sampleTex != nullptr)
-        _textures["sample"] = std::move(sampleTex);
+    auto tex = _texLoader.loadFromMemory(data, siz);
+    if (tex != nullptr)
+        _texStore.store(name, std::move(tex));
 
     delete[] data;
 }
@@ -42,13 +50,15 @@ void App::draw()
         ImGui::Begin("Hello, world!"); // Create a window called "Hello,
                                        // world!" and append into it.
 
-        ImGui::Text("This is some useful text."); // Display some text (you can
+        //ImGui::Text("This is some useful text."); // Display some text (you can
                                                   // use a format strings too)
+
         ImGui::Checkbox("Demo Window",
                         &show_demo_window); // Edit bools storing our window
                                             // open/close state
         ImGui::Checkbox("Another Window", &show_another_window);
 
+        /*
         ImGui::SliderFloat(
                 "float", &f, 0.0f,
                 1.0f); // Edit 1 float using a slider from 0.0f to 1.0f
@@ -61,15 +71,24 @@ void App::draw()
 
         ImGui::SameLine();
         ImGui::Text("counter = %d", counter);
+        */
 
         ImGuiIO &io = ImGui::GetIO();
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)",
                     1000.0f / io.Framerate, io.Framerate);
 
-        if (_textures.contains("sample")) {
-            auto& sampleTex = *_textures["sample"];
+        {
+            static const int texCount = 3;
+            static const char* const textureNames[texCount] = {"test", "usb", "javascript"};
+            static int texIndex = 0;
 
-            ImGui::Image(sampleTex.inner(), Utils::getDimensions(sampleTex));
+            ImGui::Combo("Texture", &texIndex, textureNames, texCount);
+
+            if (_texStore.has(textureNames[texIndex])) {
+                auto& sampleTex = *_texStore.retrieve(textureNames[texIndex]);
+
+                ImGui::Image(sampleTex.inner(), Utils::getDimensions(sampleTex));
+            }
         }
 
         ImGui::End();

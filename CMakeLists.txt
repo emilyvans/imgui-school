@@ -40,6 +40,7 @@ set(SRC
     ./src/Utils.cpp
     ./src/Texture.cpp
     ./src/TextureLoader.cpp
+    ./src/TextureStore.cpp
     ./src/renderer/Renderer.cpp
 )
 
