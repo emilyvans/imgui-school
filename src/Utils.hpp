@@ -10,10 +10,7 @@
 
 namespace Utils {
     struct StbiFree {
-        void operator()(stbi_uc* data)
-        {
-            stbi_image_free(data);
-        }
+        void operator()(stbi_uc* data);
     };
     using StbiPtr = std::unique_ptr<stbi_uc, StbiFree>;
 
