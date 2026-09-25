@@ -11,8 +11,11 @@ bool TextureLoader::_loadImageFromMemory(const void* data, size_t dataSize,
         StbiPtr& pixelData, int* width, int* height, int* channels)
 {
     pixelData = StbiPtr{
-            stbi_load_from_memory((const unsigned char*)data, (int)dataSize,
-                width, height, channels, 4)
+        stbi_load_from_memory(
+                reinterpret_cast<const unsigned char*>(data),
+                static_cast<int>(dataSize),
+                width, height, channels, 4
+        )
     };
 
     return pixelData != nullptr;
