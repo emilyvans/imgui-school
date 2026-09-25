@@ -9,14 +9,13 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 #set(CMAKE_C_COMPILER gcc-16)
 #set(CMAKE_CXX_COMPILER g++-16)
 
-#set(CMAKE_CXX_FLAGS_DEBUG_INIT "-Wall -g")
-#set(CMAKE_CXX_FLAGS_RELEASE_INIT "-Wall -O3")
+set(CMAKE_CXX_FLAGS_DEBUG_INIT "-g")
+set(CMAKE_CXX_FLAGS_RELEASE_INIT "-O3")
  
 option(USE_GL "Use OpenGL regardless of platform" OFF)
 
 project(dearimgui)
 include(FetchContent)
-
 FetchContent_Declare(glfw
 	SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/vendor/glfw-3.5.1/"
 )
@@ -57,11 +56,12 @@ set(SRC
 
 set(LIB
     glfw
-    mariadbcpp-static)
+    mariadbcpp-static
+)
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     message(STATUS "Debug build")
-    list(APPEND LIB "-lprofiler")
+    list(APPEND LIB profiler)
 endif()
 
 if (APPLE AND NOT USE_GL)
@@ -114,6 +114,6 @@ target_include_directories(imguiapp PRIVATE
 )
 
 target_sources(imguiapp PRIVATE ${SRC} ${SRC_PLATFORM} ${SRC_IMGUI})
-target_compile_options(imguiapp PRIVATE -Wall -g)
+target_compile_options(imguiapp PRIVATE -Wall)
 target_link_libraries(imguiapp PRIVATE ${LIB} ${LIB_PLATFORM})
 
