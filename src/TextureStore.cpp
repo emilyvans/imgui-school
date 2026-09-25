@@ -7,6 +7,7 @@
 
 bool TextureStore::store(const std::string& key, std::unique_ptr<Texture> tex)
 {
+    // TODO: separate these out into individual errors (return vals?)
     if (tex == nullptr || _textures.contains(key)) {
         return false;
     }
@@ -18,7 +19,9 @@ bool TextureStore::store(const std::string& key, std::unique_ptr<Texture> tex)
 
 Texture* TextureStore::retrieve(const std::string& key) const
 {
-    return _textures.at(key).get();
+    auto res = _textures.find(key);
+
+    return (res != _textures.end()) ? res->second.get() : nullptr;
 }
 
 bool TextureStore::has(const std::string& key) const noexcept {
