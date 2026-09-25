@@ -1,7 +1,7 @@
-#pragma once 
+#pragma once
 
-#include <imgui.h>
 #include <GLFW/glfw3.h>
+#include <imgui.h>
 
 #include "Window.hpp"
 #include "renderer/Renderer.hpp"
@@ -15,8 +15,7 @@ public:
     GLRenderer(Window<OpenGL>& win);
     ~GLRenderer();
 
-    //void render(std::function<void()> update) override;
+    // void render(std::function<void()> update) override;
     bool renderBegin() override;
     bool renderEnd() override;
 };
-

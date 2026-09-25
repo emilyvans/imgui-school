@@ -9,14 +9,13 @@
 #include "Utils.hpp"
 
 App::App(TextureLoader& texLoader)
-    : _texLoader{texLoader}
-{
+    : _texLoader{texLoader} {
     _loadTexture("test", "./assets/test.png");
     _loadTexture("usb", "./assets/usb.jpg");
     _loadTexture("javascript", "./assets/js.jpg");
 }
 
-void App::_loadTexture(const std::string &name, const std::string &path) {
+void App::_loadTexture(const std::string& name, const std::string& path) {
     std::ifstream imgFile{path, std::ios::binary};
 
     if (!imgFile) {
@@ -47,8 +46,8 @@ void App::draw() {
     // 2. Show a simple window that we create ourselves. We use a Begin/End
     // pair to create a named window.
     {
-        //static float f = 0.0f;
-        //static int counter = 0;
+        // static float f = 0.0f;
+        // static int counter = 0;
 
         ImGui::Begin("Hello, world!"); // Create a window called "Hello,
                                        // world!" and append into it.
@@ -77,23 +76,22 @@ void App::draw() {
         ImGui::Text("counter = %d", counter);
         */
 
-        ImGuiIO &io = ImGui::GetIO();
+        ImGuiIO& io = ImGui::GetIO();
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)",
                     1000.0f / io.Framerate, io.Framerate);
 
         {
             static const int texCount = 3;
-            static const char *const textureNames[texCount] = {"test", "usb",
+            static const char* const textureNames[texCount] = {"test", "usb",
                                                                "javascript"};
             static int texIndex = 0;
 
             ImGui::Combo("Texture", &texIndex, textureNames, texCount);
 
             if (_texStore.has(textureNames[texIndex])) {
-                auto &sampleTex = *_texStore.retrieve(textureNames[texIndex]);
+                auto& sampleTex = *_texStore.retrieve(textureNames[texIndex]);
 
-                ImGui::Image(sampleTex.inner(),
-                             Utils::getDimensions(sampleTex));
+                ImGui::Image(sampleTex.inner(), Utils::getDimensions(sampleTex));
             } else {
                 ImGui::Text("Texture with name \"%s\" doesn't exist.",
                             textureNames[texIndex]);
@@ -105,11 +103,10 @@ void App::draw() {
 
     // 3. Show another simple window.
     if (show_another_window) {
-        ImGui::Begin(
-            "Another Window",
-            &show_another_window); // Pass a pointer to our bool variable
-                                   // (the window will have a closing button
-                                   // that will clear the bool when clicked)
+        ImGui::Begin("Another Window",
+                     &show_another_window); // Pass a pointer to our bool variable
+                                            // (the window will have a closing button
+                                            // that will clear the bool when clicked)
         ImGui::Text("Hello from another window!");
 
         if (ImGui::Button("Close Me"))

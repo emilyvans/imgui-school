@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#if defined (__APPLE__)
+#if defined(__APPLE__)
 #include <OpenGL/gl.h>
 #else
 #include <GL/gl.h>
@@ -11,8 +11,7 @@
 #include "GLTexture.hpp"
 #include "Utils.hpp"
 
-std::unique_ptr<Texture> GLTextureLoader::loadFromMemory(const void* data, size_t size)
-{
+std::unique_ptr<Texture> GLTextureLoader::loadFromMemory(const void* data, size_t size) {
     Utils::StbiPtr imageData;
     int width, height;
 
@@ -28,9 +27,8 @@ std::unique_ptr<Texture> GLTextureLoader::loadFromMemory(const void* data, size_
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA,
-                 GL_UNSIGNED_BYTE, imageData.get());
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 imageData.get());
 
     return std::make_unique<GLTexture>(tex, width, height);
 }
-

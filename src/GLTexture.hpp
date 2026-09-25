@@ -1,6 +1,6 @@
 #pragma once
 
-#if defined (__APPLE__)
+#if defined(__APPLE__)
 #include <OpenGL/gl.h>
 #else
 #include <GL/gl.h>
@@ -21,4 +21,3 @@ private:
     int _width;
     int _height;
 };
-

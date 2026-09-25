@@ -7,20 +7,17 @@
 #include "MetalTexture.hpp"
 #include "Utils.hpp"
 
-MetalTextureLoader::MetalTextureLoader()
-{ }
+MetalTextureLoader::MetalTextureLoader() {}
 
 MetalTextureLoader::MetalTextureLoader(NS::SharedPtr<MTL::Device> device)
-    : _device{device}
-{ }
+    : _device{device} {}
 
-void MetalTextureLoader::setDevice(NS::SharedPtr<MTL::Device> device)
-{
+void MetalTextureLoader::setDevice(NS::SharedPtr<MTL::Device> device) {
     _device = device;
 }
 
-std::unique_ptr<Texture> MetalTextureLoader::loadFromMemory(const void *data, size_t size)
-{
+std::unique_ptr<Texture> MetalTextureLoader::loadFromMemory(const void* data,
+                                                            size_t size) {
     Utils::StbiPtr imageData;
     int width, height;
 

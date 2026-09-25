@@ -1,39 +1,42 @@
 #include "GLRenderer.hpp"
 
+#if defined(__APPLE__)
+#include <OpenGL/gl.h>
+#else
+#include <GL/gl.h>
+#endif
+
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 
-GLRenderer::GLRenderer(Window<OpenGL> &win) : _win{win} {
-    const char *glsl_version = nullptr;
+GLRenderer::GLRenderer(Window<OpenGL>& win)
+    : _win{win} {
+    const char* glsl_version = nullptr;
     float main_scale = ImGui_ImplGlfw_GetContentScaleForMonitor(
         glfwGetPrimaryMonitor()); // Valid on GLFW 3.3+ only
                                   //
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    ImGuiIO &io = ImGui::GetIO();
-    io.ConfigFlags |=
-        ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
-    io.ConfigFlags |=
-        ImGuiConfigFlags_NavEnableGamepad;            // Enable Gamepad Controls
-    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable; // Enable Docking
-    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; // Enable Multi-Viewport
-                                                        // / Platform Windows
+    ImGuiIO& io = ImGui::GetIO();
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;  // Enable Gamepad Controls
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;     // Enable Docking
+    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;   // Enable Multi-Viewport
+                                                          // / Platform Windows
     // Setup Dear ImGui style
     ImGui::StyleColorsDark();
     // ImGui::StyleColorsLight();
 
     // Setup scaling
-    ImGuiStyle &style = ImGui::GetStyle();
-    style.ScaleAllSizes(
-        main_scale); // Bake a fixed style scale. (until we have a solution for
-                     // dynamic style scaling, changing this requires resetting
-                     // Style + calling this again)
-    style.FontScaleDpi =
-        main_scale; // Set initial font scale. (in docking branch: using
-                    // io.ConfigDpiScaleFonts=true automatically overrides this
-                    // for every _win.glfwWindow() depending on the current
-                    // monitor)
+    ImGuiStyle& style = ImGui::GetStyle();
+    style.ScaleAllSizes(main_scale); // Bake a fixed style scale. (until we have a
+                                     // solution for dynamic style scaling, changing this
+                                     // requires resetting Style + calling this again)
+    style.FontScaleDpi = main_scale; // Set initial font scale. (in docking branch: using
+                                     // io.ConfigDpiScaleFonts=true automatically
+                                     // overrides this for every _win.glfwWindow()
+                                     // depending on the current monitor)
 
     // Setup Platform/Renderer backends
     ImGui_ImplGlfw_InitForOpenGL(_win.glfwWindow(), true);
@@ -119,7 +122,7 @@ bool GLRenderer::renderEnd() {
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
     if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
-        GLFWwindow *backup_current_context = glfwGetCurrentContext();
+        GLFWwindow* backup_current_context = glfwGetCurrentContext();
 
         ImGui::UpdatePlatformWindows();
         ImGui::RenderPlatformWindowsDefault();

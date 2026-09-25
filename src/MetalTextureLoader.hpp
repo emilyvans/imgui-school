@@ -5,8 +5,8 @@
 #include <Foundation/Foundation.hpp>
 #include <Metal/Metal.hpp>
 
-#include "TextureLoader.hpp"
 #include "Texture.hpp"
+#include "TextureLoader.hpp"
 
 class MetalTextureLoader : public TextureLoader {
 private:
@@ -20,4 +20,3 @@ public:
 
     std::unique_ptr<Texture> loadFromMemory(const void* data, size_t size) override;
 };
-

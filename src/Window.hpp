@@ -20,7 +20,7 @@ enum WindowType {
 template <WindowType type>
 class Window {
 private:
-    GLFWwindow *_window = nullptr;
+    GLFWwindow* _window = nullptr;
 
     inline void _windowHintsOpenGL() {
 #if defined(IMGUI_IMPL_OPENGL_ES2)
@@ -52,7 +52,7 @@ private:
     }
 
 public:
-    Window(int width, int height, const std::string &title) {
+    Window(int width, int height, const std::string& title) {
         // window hints
         if constexpr (type == WindowType::NoApi) {
             glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
@@ -60,8 +60,7 @@ public:
             _windowHintsOpenGL();
         }
 
-        _window =
-            glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
+        _window = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
         if (_window == nullptr)
             throw std::runtime_error{"Could not create GLFW window"};
 
@@ -77,5 +76,5 @@ public:
 
     constexpr WindowType windowType() noexcept { return type; }
 
-    GLFWwindow *glfwWindow() noexcept { return _window; }
+    GLFWwindow* glfwWindow() noexcept { return _window; }
 };

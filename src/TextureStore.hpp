@@ -1,4 +1,4 @@
-#pragma once 
+#pragma once
 
 #include <memory>
 #include <string>
@@ -17,4 +17,3 @@ public:
 
     bool has(const std::string& key) const noexcept;
 };
-

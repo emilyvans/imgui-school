@@ -15,4 +15,4 @@ namespace Utils {
     using StbiPtr = std::unique_ptr<stbi_uc, StbiFree>;
 
     ImVec2 getDimensions(const Texture& tex);
-}
+} // namespace Utils

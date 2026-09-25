@@ -2,7 +2,11 @@
 BasedOnStyle:  LLVM
 AccessModifierOffset: -4
 AllowShortFunctionsOnASingleLine: Inline
-IndentWidth:     4
-TabWidth:        4
-#UseTab:          AlignWithSpaces
+IndentWidth: 4
+TabWidth: 4
 BreakTemplateDeclarations: Yes
+PointerAlignment: Left
+ColumnLimit: 90
+BreakConstructorInitializers: BeforeColon
+PackConstructorInitializers: NextLineOnly
+NamespaceIndentation: All

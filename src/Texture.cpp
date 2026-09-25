@@ -2,7 +2,4 @@
 
 #include <imgui.h>
 
-Texture::~Texture()
-{
-}
-
+Texture::~Texture() {}

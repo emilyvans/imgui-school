@@ -38,7 +38,7 @@ using WindowImpl = Window<OpenGL>;
 using TextureLoaderImpl = GLTextureLoader;
 #endif
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
     if (!glfwInit())
         return 1;
 
