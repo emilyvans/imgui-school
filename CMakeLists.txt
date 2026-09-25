@@ -51,6 +51,7 @@ set(SRC
     ./src/Texture.cpp
     ./src/TextureLoader.cpp
     ./src/TextureStore.cpp
+    ./src/Stbi.cpp
     ./src/renderer/Renderer.cpp
 )
 

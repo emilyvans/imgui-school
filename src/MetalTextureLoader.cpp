@@ -1,11 +1,11 @@
 #include "MetalTextureLoader.hpp"
 
-#include <Foundation/Foundation.hpp>
-#include <Metal/Metal.hpp>
-
 #include "Metal/MTLPixelFormat.hpp"
 #include "MetalTexture.hpp"
-#include "Utils.hpp"
+#include "Stbi.hpp"
+
+#include <Foundation/Foundation.hpp>
+#include <Metal/Metal.hpp>
 
 MetalTextureLoader::MetalTextureLoader() {}
 
@@ -18,10 +18,10 @@ void MetalTextureLoader::setDevice(NS::SharedPtr<MTL::Device> device) {
 
 std::unique_ptr<Texture> MetalTextureLoader::loadFromMemory(const void* data,
                                                             size_t size) {
-    Utils::StbiPtr imageData;
+    Stbi::DataPtr imageData;
     int width, height;
 
-    if (!_loadImageFromMemory(data, size, imageData, &width, &height, nullptr)) {
+    if (!Stbi::loadFromMemory(data, size, imageData, &width, &height, nullptr)) {
         return nullptr;
     }
 

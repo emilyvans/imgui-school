@@ -1,6 +1,7 @@
 #include "GLTextureLoader.hpp"
 
-#include <memory>
+#include "GLTexture.hpp"
+#include "Stbi.hpp"
 
 #if defined(__APPLE__)
 #include <OpenGL/gl.h>
@@ -8,14 +9,13 @@
 #include <GL/gl.h>
 #endif
 
-#include "GLTexture.hpp"
-#include "Utils.hpp"
+#include <memory>
 
 std::unique_ptr<Texture> GLTextureLoader::loadFromMemory(const void* data, size_t size) {
-    Utils::StbiPtr imageData;
+    Stbi::DataPtr imageData;
     int width, height;
 
-    if (!_loadImageFromMemory(data, size, imageData, &width, &height, nullptr)) {
+    if (!Stbi::loadFromMemory(data, size, imageData, &width, &height, nullptr)) {
         return nullptr;
     }
 
