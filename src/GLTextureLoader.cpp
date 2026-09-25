@@ -2,19 +2,17 @@
 
 #include <memory>
 
-#include <cstdint>
-
 #include <OpenGL/gl.h>
 
 #include "GLTexture.hpp"
+#include "Utils.hpp"
 
 std::unique_ptr<Texture> GLTextureLoader::loadFromMemory(const void* data, size_t size)
 {
-    int width;
-    int height;
-    std::uint8_t* imageData;
+    Utils::StbiPtr imageData;
+    int width, height;
 
-    if (!_loadDataFromMemory(data, size, imageData, &width, &height, nullptr)) {
+    if (!_loadImageFromMemory(data, size, imageData, &width, &height, nullptr)) {
         return nullptr;
     }
 
@@ -27,7 +25,7 @@ std::unique_ptr<Texture> GLTextureLoader::loadFromMemory(const void* data, size_
 
     glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA,
-                 GL_UNSIGNED_BYTE, imageData);
+                 GL_UNSIGNED_BYTE, imageData.get());
 
     return std::make_unique<GLTexture>(tex, width, height);
 }
