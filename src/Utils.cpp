@@ -9,7 +9,7 @@
 namespace Utils {
     void StbiFree::operator()(stbi_uc* data)
     {
-        stbi_image_free(data);
+        if (data) stbi_image_free(data);
     }
 
     ImVec2 getDimensions(const Texture& tex)
