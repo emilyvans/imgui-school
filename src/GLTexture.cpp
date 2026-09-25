@@ -1,6 +1,10 @@
 #include "GLTexture.hpp"
 
+#if defined (__APPLE__)
 #include <OpenGL/gl.h>
+#else
+#include <GL/gl.h>
+#endif
 
 GLTexture::GLTexture(GLuint texId, int width, int height)
     : _tex{texId}, _width{width}, _height{height}

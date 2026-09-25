@@ -229,3 +229,4 @@ build/
 .cache/
 _tmp/
 imgui.ini
+vendor/mariadb-connector-cpp-1.1.8/install_test

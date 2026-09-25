@@ -18,29 +18,29 @@
 #define NS_PRIVATE_IMPLEMENTATION
 #define CA_PRIVATE_IMPLEMENTATION
 #define MTL_PRIVATE_IMPLEMENTATION
+#include <AppKit/AppKit.hpp>
 #include <Foundation/Foundation.hpp>
 #include <Metal/Metal.hpp>
 #include <QuartzCore/QuartzCore.hpp>
-#include <AppKit/AppKit.hpp>
 
-#include "renderer/MetalRenderer.hpp"
 #include "MetalTextureLoader.hpp"
+#include "renderer/MetalRenderer.hpp"
 
 using RendererImpl = MetalRenderer;
 using WindowImpl = Window<Metal>;
 using TextureLoaderImpl = MetalTextureLoader;
 #else
-#include "renderer/GLRenderer.hpp"
 #include "GLTextureLoader.hpp"
+#include "renderer/GLRenderer.hpp"
 
 using RendererImpl = GLRenderer;
 using WindowImpl = Window<OpenGL>;
 using TextureLoaderImpl = GLTextureLoader;
 #endif
 
-int main(int argc, char** argv)
-{
-    if (!glfwInit()) return 1;
+int main(int argc, char **argv) {
+    if (!glfwInit())
+        return 1;
 
     WindowImpl window{800, 600, "test"};
     RendererImpl renderer{window};

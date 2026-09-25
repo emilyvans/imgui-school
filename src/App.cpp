@@ -1,24 +1,25 @@
 #include "App.hpp"
 
+#include <cstdlib>
 #include <fstream>
 #include <string>
-#include <cstdlib>
 
 #include <imgui.h>
 
 #include "Utils.hpp"
 
-App::App(TextureLoader& texLoader)
-    : _texLoader{texLoader}
-{
+App::App(TextureLoader &texLoader) : _texLoader{texLoader} {
     _loadTexture("test", "./test.png");
     _loadTexture("usb", "./usb.jpg");
     _loadTexture("javascript", "./js.jpg");
 }
 
-void App::_loadTexture(const std::string& name, const std::string& path)
-{
+void App::_loadTexture(const std::string &name, const std::string &path) {
     std::ifstream imgFile{path, std::ios::binary};
+
+    if (!imgFile) {
+        return;
+    }
 
     imgFile.seekg(0, std::ios::end);
     size_t siz = imgFile.tellg();
@@ -34,12 +35,12 @@ void App::_loadTexture(const std::string& name, const std::string& path)
     delete[] data;
 }
 
-void App::draw()
-{
+void App::draw() {
     // 1. Show the big demo window (Most of the sample code is in
     // ImGui::ShowDemoWindow()! You can browse its code to learn more about
     // Dear ImGui!).
-    if (show_demo_window) ImGui::ShowDemoWindow(&show_demo_window);
+    if (show_demo_window)
+        ImGui::ShowDemoWindow(&show_demo_window);
 
     // 2. Show a simple window that we create ourselves. We use a Begin/End
     // pair to create a named window.
@@ -50,8 +51,9 @@ void App::draw()
         ImGui::Begin("Hello, world!"); // Create a window called "Hello,
                                        // world!" and append into it.
 
-        //ImGui::Text("This is some useful text."); // Display some text (you can
-                                                  // use a format strings too)
+        // ImGui::Text("This is some useful text."); // Display some text (you
+        // can
+        //  use a format strings too)
 
         ImGui::Checkbox("Demo Window",
                         &show_demo_window); // Edit bools storing our window
@@ -66,8 +68,8 @@ void App::draw()
                 "clear color",
                 (float *)&clear_color); // Edit 3 floats representing a color
 
-        // Buttons return true when clicked (most widgets return true when edited/activated)
-        if (ImGui::Button( "Button")) counter++;
+        // Buttons return true when clicked (most widgets return true when
+        edited/activated) if (ImGui::Button( "Button")) counter++;
 
         ImGui::SameLine();
         ImGui::Text("counter = %d", counter);
@@ -79,15 +81,20 @@ void App::draw()
 
         {
             static const int texCount = 3;
-            static const char* const textureNames[texCount] = {"test", "usb", "javascript"};
+            static const char *const textureNames[texCount] = {"test", "usb",
+                                                               "javascript"};
             static int texIndex = 0;
 
             ImGui::Combo("Texture", &texIndex, textureNames, texCount);
 
             if (_texStore.has(textureNames[texIndex])) {
-                auto& sampleTex = *_texStore.retrieve(textureNames[texIndex]);
+                auto &sampleTex = *_texStore.retrieve(textureNames[texIndex]);
 
-                ImGui::Image(sampleTex.inner(), Utils::getDimensions(sampleTex));
+                ImGui::Image(sampleTex.inner(),
+                             Utils::getDimensions(sampleTex));
+            } else {
+                ImGui::Text("Texture with name \"%s\" doesn't exist.",
+                            textureNames[texIndex]);
             }
         }
 
@@ -97,15 +104,15 @@ void App::draw()
     // 3. Show another simple window.
     if (show_another_window) {
         ImGui::Begin(
-                "Another Window",
-                &show_another_window); // Pass a pointer to our bool variable
+            "Another Window",
+            &show_another_window); // Pass a pointer to our bool variable
                                    // (the window will have a closing button
                                    // that will clear the bool when clicked)
         ImGui::Text("Hello from another window!");
 
-        if (ImGui::Button("Close Me")) show_another_window = false;
+        if (ImGui::Button("Close Me"))
+            show_another_window = false;
 
         ImGui::End();
     }
 }
-
