@@ -1,12 +1,11 @@
 #include "MetalTextureLoader.hpp"
 
-#include <cstdint>
-
 #include <Foundation/Foundation.hpp>
 #include <Metal/Metal.hpp>
 
 #include "Metal/MTLPixelFormat.hpp"
 #include "MetalTexture.hpp"
+#include "Utils.hpp"
 
 MetalTextureLoader::MetalTextureLoader()
 { }
@@ -22,10 +21,10 @@ void MetalTextureLoader::setDevice(NS::SharedPtr<MTL::Device> device)
 
 std::unique_ptr<Texture> MetalTextureLoader::loadFromMemory(const void *data, size_t size)
 {
-    std::uint8_t* imageData = nullptr;
+    Utils::StbiPtr imageData;
     int width, height;
 
-    if (!_loadDataFromMemory(data, size, imageData, &width, &height, nullptr)) {
+    if (!_loadImageFromMemory(data, size, imageData, &width, &height, nullptr)) {
         return nullptr;
     }
 
@@ -36,7 +35,7 @@ std::unique_ptr<Texture> MetalTextureLoader::loadFromMemory(const void *data, si
 
     auto tex = _device->newTexture(texDesc);
     MTL::Region region(0, 0, 0, width, height, 1);
-    tex->replaceRegion(region, 0, imageData, 4 * width);
+    tex->replaceRegion(region, 0, imageData.get(), 4 * width);
 
     return std::make_unique<MetalTexture>(NS::TransferPtr(tex));
 }

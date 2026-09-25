@@ -6,12 +6,13 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+#set(CMAKE_C_COMPILER gcc-16)
+#set(CMAKE_CXX_COMPILER g++-16)
+
 #set(CMAKE_CXX_FLAGS_DEBUG_INIT "-Wall -g")
 #set(CMAKE_CXX_FLAGS_RELEASE_INIT "-Wall -O3")
  
 option(USE_GL "Use OpenGL regardless of platform" OFF)
-
-message(${USE_GL})
 
 project(dearimgui)
 include(FetchContent)
@@ -27,11 +28,12 @@ FetchContent_Declare(mariadbcpp
 
 FetchContent_MakeAvailable(glfw mariadbcpp)
 
-find_package(OpenGL REQUIRED)
-
-add_definitions(-DGL_SILENCE_DEPRECATION)
-
 add_executable(imguiapp)
+
+add_custom_command(TARGET imguiapp PRE_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_SOURCE_DIR}/assets ${CMAKE_CURRENT_BINARY_DIR}/assets
+)
 
 set(SRC_IMGUI
     ./vendor/dearimgui/imgui.cpp
@@ -57,7 +59,14 @@ set(LIB
     glfw
     mariadbcpp-static)
 
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    message(STATUS "Debug build")
+    list(APPEND LIB "-lprofiler")
+endif()
+
 if (APPLE AND NOT USE_GL)
+    message(STATUS "Graphics API: Metal")
+
     set(LIB_PLATFORM
         "-framework Foundation"
         "-framework QuartzCore"
@@ -76,6 +85,10 @@ if (APPLE AND NOT USE_GL)
 
     target_compile_definitions(imguiapp PRIVATE USE_METAL)
 else()
+    find_package(OpenGL REQUIRED)
+
+    message(STATUS "Graphics API: OpenGL")
+
     set(LIB_PLATFORM OpenGL::GL)
     set(SRC_PLATFORM
         ./src/renderer/GLRenderer.cpp
@@ -84,7 +97,11 @@ else()
         ./vendor/dearimgui/backends/imgui_impl_opengl3.cpp
     )
 
-    target_compile_definitions(imguiapp PRIVATE USE_GL)
+    target_compile_definitions(imguiapp PRIVATE
+        USE_GL
+        GL_SILENCE_DEPRECATION
+    )
+
 endif()
 
 target_include_directories(imguiapp PRIVATE

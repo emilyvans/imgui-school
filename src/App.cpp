@@ -8,10 +8,12 @@
 
 #include "Utils.hpp"
 
-App::App(TextureLoader &texLoader) : _texLoader{texLoader} {
-    _loadTexture("test", "./test.png");
-    _loadTexture("usb", "./usb.jpg");
-    _loadTexture("javascript", "./js.jpg");
+App::App(TextureLoader& texLoader)
+    : _texLoader{texLoader}
+{
+    _loadTexture("test", "./assets/test.png");
+    _loadTexture("usb", "./assets/usb.jpg");
+    _loadTexture("javascript", "./assets/js.jpg");
 }
 
 void App::_loadTexture(const std::string &name, const std::string &path) {
@@ -45,8 +47,8 @@ void App::draw() {
     // 2. Show a simple window that we create ourselves. We use a Begin/End
     // pair to create a named window.
     {
-        static float f = 0.0f;
-        static int counter = 0;
+        //static float f = 0.0f;
+        //static int counter = 0;
 
         ImGui::Begin("Hello, world!"); // Create a window called "Hello,
                                        // world!" and append into it.
